@@ -16,7 +16,7 @@ Enter Heuristic either 'H' or 'M' (H is Hamming and M is Manhattan): H
 Found Solution!
 Moves: R U L L D R D R D
 Number of Nodes expanded: 516
-Time Taken: 0.011
+Time Taken: 0.006
 Memory Used: 4264 kb
 
   ------------OR-----------------------------------------------
@@ -27,5 +27,5 @@ Enter Heuristic either 'H' or 'M' (H is Hamming and M is Manhattan): M
 Found Solution!
 Moves: R U L L D R D R D
 Number of Nodes expanded: 877
-Time Taken: 0.011
+Time Taken: 0.012
 Memory Used: 7976 kb
