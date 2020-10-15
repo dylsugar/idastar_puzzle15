@@ -97,59 +97,58 @@ def goal_test():
 
 
 def ida_star(root,heuristic,goal):
-    
+    '''iterative deepening A*: only explores the cheapest nodes in IDFS''' 
     start_time = time.time()
-    pathstack = []
+    pathstack = [] #holds the path for all valid visited nodes: most recent on top
     bound = 0
     if heuristic == 0:
         bound = hamming(root.state.tiles) + gcalc(root)
     elif heuristic == 1:
         bound = manhattan_calculate(root.state.tiles) + gcalc(root) 
 
-    #bound.append(hamming(root.state.tiles)+gcalc(root))
     pathstack.append(root)
     distance = 0
-    count = 0
+    count= [] #number of expanded nodes
     while True:
-        t = ida_star_iter(pathstack,heuristic,distance,bound,goal,count+1)
+        t = ida_star_iter(pathstack,heuristic,distance,bound,goal,count)
         if t == math.inf: return -1
-        elif t == "found":
+        elif t == "found": #if node is the goal state
             end_time = time.time()
-            print("Number of Nodes expanded1: " + str(count))
             print("Time Taken: " + str(round((end_time-start_time),3)))
-            print("Memory Used: " + str(sys.getsizeof(pathstack)) + " kb")
+            print("Memory Used: " + str(sys.getsizeof(count)) + " kb")
             return #path,bound
         else:
-            bound = t
+            bound = t #next best possible path based on heuristic
 
 def ida_star_iter(path,heuristic,distance,bound,goal,count):
-    src = path[len(path)-1] 
+    '''Iterative Deepening A* iterator: the workhorse behind main function'''
+    count.append(1)
+    src = path[len(path)-1]
     if heuristic == 0:
         estimate = distance + hamming(src.state.tiles) + gcalc(src)
     elif heuristic == 1:
         estimate = distance + manhattan_calculate(src.state.tiles) + gcalc(src)
     
-    if estimate > bound:
+    if estimate > bound:#out of bounds check
         return estimate
-
     if src.state.tiles == goal:
         print("\n\nFound Solution!")
         print("Moves: " + str(' '.join(find_path(src))))
-        print("Number of Nodes expanded: " + str(count))
+        print("Number of Nodes expanded: " + str(len(count)))
         return "found"
 
     min = math.inf
-    for child in get_children(src):
+    for child in get_children(src): #All RLUD children
         if child not in path:
-            path.append(child)
-            t = ida_star_iter(path,heuristic,distance+1,bound,goal,count+1)
+            path.append(child) #adds to top of the stack
+            t = ida_star_iter(path,heuristic,distance+1,bound,goal,count) #checks that one step path
             
             if t == "found":return "found"
             
-            elif t < min:
+            elif t < min:#updates the min to new min
                 min = t
-            path.pop(len(path)-1)
-    return min
+            path.pop(len(path)-1) #pop from top of the stack
+    return min #last resort if not found, so probably not the right path
 
 def main(argv):
     heuristic = input("Enter Heuristic either 'H' or 'M' (H is Hamming and M is Manhattan): ")
@@ -160,7 +159,6 @@ def main(argv):
 
     max_depth = 10
     root = Node(Board(argv),None,None)
-    #astar(root,goal_test(),heuristic)
     ida_star(root,heuristic,goal_test())
 
 
